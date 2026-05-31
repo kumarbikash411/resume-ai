@@ -178,10 +178,10 @@ public class ResumeService {
         throws IOException {
 
     try (InputStream inputStream =file.getInputStream();
-         PDDocument document =PDDocument.load(inputStream)) {
-        PDFTextStripper stripper =new PDFTextStripper();
-        return stripper.getText(document);
-    }
+        try (PDDocument document =Loader.loadPDF(file.getBytes())) {
+      PDFTextStripper stripper = new PDFTextStripper();
+    return stripper.getText(document);
+}
 }
 
     private String extractDocxText(MultipartFile file) throws IOException {
