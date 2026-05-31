@@ -174,10 +174,10 @@ public class ResumeService {
     }
 
     private String extractPdfText(MultipartFile file) throws IOException {
-        try (PDDocument document = PDDocument.load(file.getInputStream())) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            return stripper.getText(document);
-        }
+        try (PDDocument document = PDDocument.load(inputStream)) {
+    PDFTextStripper stripper = new PDFTextStripper();
+    return stripper.getText(document);
+}
     }
 
     private String extractDocxText(MultipartFile file) throws IOException {
