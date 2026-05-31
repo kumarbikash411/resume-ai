@@ -157,47 +157,43 @@ public class ResumeService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 
-    private boolean isPdfOrDocx(String contentType, String filename) {
-        if (contentType != null) {
-            return contentType.equals("application/pdf") ||
-                   contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-        }
-        if (filename != null) {
-            return filename.endsWith(".pdf") || filename.endsWith(".docx");
-        }
-        return false;
+   private boolean isPdfOrDocx(String contentType, String filename) {
+    if (contentType != null) {
+        return contentType.equals("application/pdf") ||
+               contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
     }
 
-    private String extractText(MultipartFile file, String contentType) throws IOException {
-        if (contentType != null && contentType.equals("application/pdf")) {
-            return extractPdfText(file);
-        } else {
-            return extractDocxText(file);
-        }
+    if (filename != null) {
+        return filename.endsWith(".pdf") || filename.endsWith(".docx");
     }
 
-   public String extractText(MultipartFile file)
-        throws IOException {
-
-    try (InputStream inputStream =file.getInputStream();
-        try (PDDocument document =Loader.loadPDF(file.getBytes())) {
-      PDFTextStripper stripper = new PDFTextStripper();
-    return stripper.getText(document);
-}
+    return false;
 }
 
-    private String extractDocxText(MultipartFile file) throws IOException {
-        try (XWPFDocument document = new XWPFDocument(file.getInputStream());
-             XWPFWordExtractor extractor = new XWPFWordExtractor(document)) {
-            return extractor.getText();
-        }
+private String extractText(MultipartFile file, String contentType) throws IOException {
+
+    if ("application/pdf".equals(contentType)) {
+        return extractPdfText(file);
     }
+
+    return extractDocxText(file);
+}
+
 private String extractPdfText(MultipartFile file) throws IOException {
-    try (PDDocument document =
-             PDDocument.load(file.getInputStream())) {
+
+    try (PDDocument document = Loader.loadPDF(file.getBytes())) {
 
         PDFTextStripper stripper = new PDFTextStripper();
         return stripper.getText(document);
+    }
+}
+
+private String extractDocxText(MultipartFile file) throws IOException {
+
+    try (XWPFDocument document = new XWPFDocument(file.getInputStream());
+         XWPFWordExtractor extractor = new XWPFWordExtractor(document)) {
+
+        return extractor.getText();
     }
 }
     private String extractScoreFromAnalysis(String analysis) {
