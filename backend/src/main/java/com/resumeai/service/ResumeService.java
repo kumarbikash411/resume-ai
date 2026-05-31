@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -189,7 +190,14 @@ public class ResumeService {
             return extractor.getText();
         }
     }
+private String extractPdfText(MultipartFile file) throws IOException {
+    try (PDDocument document =
+             PDDocument.load(file.getInputStream())) {
 
+        PDFTextStripper stripper = new PDFTextStripper();
+        return stripper.getText(document);
+    }
+}
     private String extractScoreFromAnalysis(String analysis) {
         try {
             int idx = analysis.indexOf("\"overallScore\"");
